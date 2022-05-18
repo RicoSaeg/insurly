@@ -50,7 +50,7 @@ bmi = row1_col1.slider("BMI of the patient",
 health = row1_col2.slider("General Health of the Patient",
                 min_value=float(data["GenHealth"].min()),
                 max_value=float(data["GenHealth"].max()),
-                value=(1,5)
+                value=(1.0,5.0)
 )
 ##########################################################
 mask = ~data.columns.isin(["HeartDisease", "BMI", "employment_status"])

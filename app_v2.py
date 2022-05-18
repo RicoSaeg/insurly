@@ -48,8 +48,8 @@ bmi = row1_col1.slider("BMI of the patient",
 
 
 health = row1_col2.slider("General Health of the Patient",
-                min_value=data["GenHealth"].astype(int).min(),
-                max_value=data["GenHealth"].astype(int).max(),
+                min_value=float(data["GenHealth"].min()),
+                max_value=float(data["GenHealth"].max()),
                 value=(1,5)
 )
 ##########################################################

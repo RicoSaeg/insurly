@@ -1,111 +1,121 @@
 # -*- coding: utf-8 -*-
-"""
-Spyder Editor
 
-This is a temporary script file.
-"""
+#####loading libraries ###########################
+
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pickle
+#####Introduction to the Webapp and short description###########################
 
 st.set_page_config(
-    page_title = "🏥Heart Disease App🏥",
+    page_title = "Insurly",
     page_icon = "❤️",
     layout = "wide")
+st.title("🩺Insurly's Heart Disease App🏥")
+st.markdown("This dashboard helps to explore patient records and analyzing and predicting the risk of a heart disease.")
+st.write("The app has been developed by Timon Kayser, Rico Sägesser and Laura Staub")
 
-@st.cache()
+#####Defining function for loading data and model. Both cached.###########################
+
+@st.cache() #caching makes sure that loaded data and model are stored in caches. If page is reloaded this does not reload again
 def load_data():
     data = pd.read_csv("data.csv")
     return(data.dropna())
 
 @st.cache(allow_output_mutation=True)
 def load_model():
-    filename = "finalized_default_model_v2.sav"
-    loaded_model = pickle.load(open(filename, "rb"))
+    filename = "finalized_default_model_v2.sav" 
+    loaded_model = pickle.load(open(filename, "rb")) #loading the model that beforehand has been trained
     return(loaded_model)
     loaded_model
 
 data = load_data()
 model = load_model()
-################################
 
-st.title("Insurly's Heart Disease App")
-st.markdown("This dashboard helps to explore patient records and analyzing and predicting the risk of a heart disease.")
-st.write("The app has been developed by Timon Kayser, Rico Sägesser and Laura Staub")
-###################################
+#####Presenting general information on the dataset###########################
+st.header("ℹ️General Information")
 
-st.header("Patient Explorer")
+row1_col1, row1_col2, row1_col3 = st.columns([1,1,1]) #initialize rows and columns
 
-row1_col1, row1_col2, row1_col3 = st.columns([1,1,1])
+fig = plt.figure(figsize=(8,3.7))
+sns.countplot(data=data, x='DiffWalking', hue='HeartDisease')
+plt.title('Diff Walking vs Heart Disease')
+plt.xlabel('Diff Walking')
+plt.ylabel('Number of Cases')
 
-bmi = row1_col1.slider("BMI of the patient",
+row1_col1.pyplot(fig, use_container_width=True)
+
+fig2, ax = plt.subplots(figsize = (8,3.7))
+
+ax.hist(data[data["HeartDisease"]==0]["Sex"], bins=3, alpha=0.8, color="#4285f4", label="No HeartDisease")
+ax.hist(data[data["HeartDisease"]==1]["Sex"], bins=3, alpha=1, color="#ea4335", label="HeartDisease")
+
+plt.title('Gender Comparison')
+ax.set_xlabel("Sex")
+ax.set_ylabel("Number of Cases")
+
+ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.)
+
+row1_col2.pyplot(fig2, use_container_width=True)
+
+sns.set_palette('viridis')
+fig3 = plt.figure(figsize=(8,3.7))
+sns.countplot(data=data, x='PhysicalHealth', hue='HeartDisease')
+plt.title('PhysicalHealth vs Heart Disease')
+plt.xlabel('PhysicalHealth')
+plt.ylabel('Number of Cases')
+
+row1_col3.pyplot(fig3, use_container_width=True)
+
+#####Inluding Sliders and Dropdown list to further dive into the data#####################################################
+st.header("🔎Patient Explorer")
+row2_col1, row2_col2, row2_col3 = st.columns([1,1,1]) #initialize rows and columns
+
+bmi = row2_col1.slider("BMI of the patient",
                 min_value=data["BMI"].min(),
                 max_value=data["BMI"].max(),
                 value=(05.00,20.00)
 )
-########################################################
 
-health = row1_col2.slider("General Health of the Patient",
+health = row2_col2.slider("General Health of the Patient",
                 min_value=float(data["GenHealth"].min()),
                 max_value=float(data["GenHealth"].max()),
                 value=(1.0,5.0)
 )
-##########################################################
 
-mask = ~data.columns.isin(["HeartDisease", "BMI", "employment_status"])
+mask = ~data.columns.isin(["HeartDisease", "BMI", "GenHealth"])
 names = data.loc[:, mask].columns
-features = row1_col3.selectbox("Select the Variables you would like to compare:", names)
-#########################################################
+features = row2_col3.selectbox("Select the Variables you would like to compare:", names)
 
 filtered_data = data.loc[(data["BMI"] >= bmi[0]) &
                         (data["BMI"] <= bmi[1]) &
                         (data["GenHealth"] >= health[0]) &
                         (data["GenHealth"] <= health[1]), :]
-################################################
 
 if st.checkbox("Show filtered data", False):
     st.subheader("Raw Data")
     st.write(filtered_data)
+    
 #########################################################   
-
-row2_col1, row2_col2 = st.columns([1,1])
-########################################################
+row3_col1, row3_col2 = st.columns([1,1]) #initialize rows and columns
 
 barplotdata = filtered_data[["HeartDisease", features]].groupby("HeartDisease").mean()
 fig1, ax = plt.subplots(figsize=(8,3.7))
 ax.bar(barplotdata.index.astype(str), barplotdata[features], color = "green")
 ax.set_ylabel(features)
 
-row2_col1.subheader("Compare Patient Groups")
-row2_col1.pyplot(fig1, use_container_width=True)
-## seaborn plot #########################
+row3_col1.subheader("Compare Patient Groups")
+row3_col1.pyplot(fig1, use_container_width=True)
 
-fig2 = sns.lmplot(y="BMI", x = features, data = filtered_data, order=2,
+
+fig2 = sns.lmplot(y="PhysicalHealth", x = features, data = filtered_data, order=2,
                   height=4, aspect=1/1, col="HeartDisease", hue="HeartDisease", palette = "Set2")
 
-
-row2_col2.subheader("BMI Correlations")
-row2_col2.pyplot(fig2, use_container_width=True)
-
+row3_col2.subheader("Physical Health Correlations")
+row3_col2.pyplot(fig2, use_container_width=True)
 ###################################################################################################
-row3_col1, row3_col2 = st.columns([1,1])
-fig3, ax = plt.subplots(figsize = (10,6))
-
-ax.hist(data[data["HeartDisease"]==0]["Sex"], bins=3, alpha=0.8, color="#4285f4", label="No HeartDisease")
-ax.hist(data[data["HeartDisease"]==1]["Sex"], bins=3, alpha=1, color="#ea4335", label="HeartDisease")
-
-ax.set_xlabel("Sex")
-ax.set_ylabel("Frequency")
-
-ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.)
-
-row3_col1.subheader("Difference in Gender")
-st.markdown("Left: Women, Right: Men")
-row3_col1.pyplot(fig3, use_container_width=True)
-
-##########################################################
 
 st.header("Predicting Paitent Heart Disease")
 uploaded_data = st.file_uploader("Upload your own data set for predicting heart disease of customers")
@@ -160,27 +170,6 @@ if uploaded_data is not None:
 
 
 
-######################################################
-
-
-#variable = row1_col2.selectbox("select", names)
-
-#row1_col2.write(variable)
-
-
-
-#age = row1_col2.slider("Age Group of the Patients",
-              #   min_value=data["AgeCategory"],
-               # max_value=data["AgeCategory"],
-               #  value=(5-10, 35-45)
-                # )
-
-
-
-
-
-
-#######################################################################
 
     
     

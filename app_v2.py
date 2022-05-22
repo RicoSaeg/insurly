@@ -76,7 +76,7 @@ row2_col1, row2_col2, row2_col3 = st.columns([1,1,1]) #initialize rows and colum
 bmi = row2_col1.slider("BMI of the patient",
                 min_value=data["BMI"].min(),
                 max_value=data["BMI"].max(),
-                value=(05.00,20.00)
+                value=(6.00,20.00)
 )
 
 health = row2_col2.slider("General Health of the Patient",

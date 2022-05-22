@@ -39,15 +39,16 @@ st.header("ℹ️General Information")
 
 row1_col1, row1_col2, row1_col3 = st.columns([1,1,1]) #initialize rows and columns
 
-fig = plt.figure(figsize=(8,3.7))
-sns.countplot(data=data, x='DiffWalking', hue='HeartDisease')
+fig = plt.figure(figsize=(8,3.8))
+
+sns.countplot(data=data, x='DiffWalking', hue='HeartDisease', palette=['#4285f4',"#ea4335"])
 plt.title('Diff Walking vs Heart Disease')
 plt.xlabel('Diff Walking')
 plt.ylabel('Number of Cases')
 
 row1_col1.pyplot(fig, use_container_width=True)
 
-fig2, ax = plt.subplots(figsize = (8,3.7))
+fig2, ax = plt.subplots(figsize = (9,5.5))
 
 ax.hist(data[data["HeartDisease"]==0]["Sex"], bins=3, alpha=0.8, color="#4285f4", label="No HeartDisease")
 ax.hist(data[data["HeartDisease"]==1]["Sex"], bins=3, alpha=1, color="#ea4335", label="HeartDisease")
@@ -60,12 +61,11 @@ ax.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.)
 
 row1_col2.pyplot(fig2, use_container_width=True)
 
-sns.set_palette('viridis')
 fig3 = plt.figure(figsize=(8,3.7))
-sns.countplot(data=data, x='PhysicalHealth', hue='HeartDisease')
-plt.title('PhysicalHealth vs Heart Disease')
-plt.xlabel('PhysicalHealth')
-plt.ylabel('Number of Cases')
+sns.kdeplot(data[data['HeartDisease']==0]['MentalHealth'],shade=True,color='#4285f4', label='No HeartDisease')
+sns.kdeplot(data[data['HeartDisease']==1]['MentalHealth'],shade=True,color='#ea4335', label='Heart Disease')
+plt.legend()
+plt.title('Variation of Mental Health')
 
 row1_col3.pyplot(fig3, use_container_width=True)
 

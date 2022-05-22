@@ -113,7 +113,7 @@ row3_col1.pyplot(fig1, use_container_width=True)
 fig2 = sns.lmplot(y="GenHealth", x = features, data = filtered_data, order=2,
                   height=4, aspect=1/1, col="HeartDisease", hue="HeartDisease", palette = "Set1")
 
-row3_col2.subheader("General Health Correlations")
+row3_col2.subheader("General Health Regressions")
 row3_col2.pyplot(fig2, use_container_width=True)
 ###################################################################################################
 

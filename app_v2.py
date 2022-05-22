@@ -85,7 +85,7 @@ health = row2_col2.slider("General Health of the Patient",
                 value=(1.0,5.0)
 )
 
-mask = ~data.columns.isin(["HeartDisease", "BMI", "GenHealth"])
+mask = ~data.columns.isin(["HeartDisease"])
 names = data.loc[:, mask].columns
 features = row2_col3.selectbox("Select the Variables you would like to compare:", names)
 

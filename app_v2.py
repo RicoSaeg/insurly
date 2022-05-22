@@ -110,7 +110,7 @@ row3_col1.subheader("Compare Patient Groups")
 row3_col1.pyplot(fig1, use_container_width=True)
 
 
-fig2 = sns.lmplot(y="PhysicalHealth", x = features, data = filtered_data, order=2,
+fig2 = sns.lmplot(y="GenHealth", x = features, data = filtered_data, order=2,
                   height=4, aspect=1/1, col="HeartDisease", hue="HeartDisease", palette = "Set2")
 
 row3_col2.subheader("Physical Health Correlations")

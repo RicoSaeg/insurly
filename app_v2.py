@@ -89,7 +89,7 @@ mask = ~data.columns.isin(["HeartDisease"])
 names = data.loc[:, mask].columns
 features = row2_col3.selectbox("Select the Variables you would like to compare:", names)
 
-filtered_data = data.loc[(data["BMI"] >= bmi[0]) &
+filtered_data = data.loc[(data["BMI"] >= bmi[0]) & # creating filtered data according to the Slider Input of the user
                         (data["BMI"] <= bmi[1]) &
                         (data["GenHealth"] >= health[0]) &
                         (data["GenHealth"] <= health[1]), :]
@@ -101,7 +101,7 @@ if st.checkbox("Show filtered data", False):
 #########################################################   
 row3_col1, row3_col2 = st.columns([1,1]) #initialize rows and columns
 
-barplotdata = filtered_data[["HeartDisease", features]].groupby("HeartDisease")
+barplotdata = filtered_data[["HeartDisease", features]].groupby("HeartDisease").mean()
 fig1, ax = plt.subplots(figsize=(8,3.7))
 ax.bar(barplotdata.index.astype(str), barplotdata[features], color = "red")
 ax.set_ylabel(features)

@@ -101,7 +101,7 @@ if st.checkbox("Show filtered data", False):
 #########################################################   
 row3_col1, row3_col2 = st.columns([1,1]) #initialize rows and columns
 
-barplotdata = filtered_data[["HeartDisease", features]].groupby("HeartDisease").mean()
+barplotdata = filtered_data[["HeartDisease", features]].groupby("HeartDisease")
 fig1, ax = plt.subplots(figsize=(8,3.7))
 ax.bar(barplotdata.index.astype(str), barplotdata[features], color = "red")
 ax.set_ylabel(features)
